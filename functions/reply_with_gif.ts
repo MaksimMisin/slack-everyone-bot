@@ -18,7 +18,7 @@ const BONUS_GIFS = [
   "https://media.tenor.com/S2IqQC54vDYAAAAM/leon-the-professional-norman-stansfield.gif",
   "https://media.tenor.com/ntISAag9GrAAAAAM/the-professional-leon.gif",
   "https://media.tenor.com/_IzouOK5FXAAAAAC/frustrated-frustration.gif",
-  "https://makeagif.com/i/9uHoPd",
+  "https://i.makeagif.com/media/3-01-2016/9uHoPd.gif",
 ];
 
 const CLASSIC_CHANCE = 0.7;
