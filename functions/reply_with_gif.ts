@@ -28,6 +28,8 @@ function pickWeightedGif(): string {
 }
 
 const EVERYONE_RE = /\beveryone\b/i;
+const AT_YOUR_SERVICE_GIF =
+  "https://media.tenor.com/CN6bNckzypoAAAAC/at-your-service.gif";
 
 export const ReplyWithGifFunction = DefineFunction({
   callback_id: "reply_with_gif",
@@ -47,28 +49,56 @@ export const ReplyWithGifFunction = DefineFunction({
 export default SlackFunction(
   ReplyWithGifFunction,
   async ({ inputs, client }) => {
-    // Double-check whole-word match (the trigger filter uses CONTAINS which is loose)
-    if (!EVERYONE_RE.test(inputs.message_text)) {
+    const isEveryone = EVERYONE_RE.test(inputs.message_text);
+
+    // Check if the bot itself was @mentioned
+    let isBotMentioned = false;
+    const auth = await client.auth.test();
+    if (auth.ok && auth.user_id) {
+      isBotMentioned = inputs.message_text.includes(`<@${auth.user_id}>`);
+    }
+
+    if (!isEveryone && !isBotMentioned) {
       return { outputs: {} };
     }
 
-    const gif = pickWeightedGif();
+    // @Gary mention → "at your service"
+    if (isBotMentioned) {
+      const res = await client.chat.postMessage({
+        channel: inputs.channel_id,
+        thread_ts: inputs.message_ts,
+        text: "At your service!",
+        blocks: [
+          {
+            type: "image",
+            image_url: AT_YOUR_SERVICE_GIF,
+            alt_text: "At your service",
+          },
+        ],
+      });
+      if (!res.ok) {
+        console.error(`chat.postMessage failed: ${res.error}`);
+      }
+    }
 
-    const res = await client.chat.postMessage({
-      channel: inputs.channel_id,
-      thread_ts: inputs.message_ts,
-      text: "Gary Oldman has something to say",
-      blocks: [
-        {
-          type: "image",
-          image_url: gif,
-          alt_text: "Gary Oldman screaming EVERYONE",
-        },
-      ],
-    });
-
-    if (!res.ok) {
-      console.error(`chat.postMessage failed: ${res.error} (gif: ${gif})`);
+    // "everyone" → random Gary GIF
+    if (isEveryone) {
+      const gif = pickWeightedGif();
+      const res = await client.chat.postMessage({
+        channel: inputs.channel_id,
+        thread_ts: inputs.message_ts,
+        text: "Gary Oldman has something to say",
+        blocks: [
+          {
+            type: "image",
+            image_url: gif,
+            alt_text: "Gary Oldman screaming EVERYONE",
+          },
+        ],
+      });
+      if (!res.ok) {
+        console.error(`chat.postMessage failed: ${res.error} (gif: ${gif})`);
+      }
     }
 
     return { outputs: {} };

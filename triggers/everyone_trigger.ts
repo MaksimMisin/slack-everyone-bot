@@ -22,6 +22,7 @@ const everyoneTrigger: Trigger<typeof EveryoneWorkflow.definition> = {
           { statement: "{{data.text}} CONTAINS 'everyone'" },
           { statement: "{{data.text}} CONTAINS 'Everyone'" },
           { statement: "{{data.text}} CONTAINS 'EVERYONE'" },
+          { statement: "{{data.text}} CONTAINS '<@'" },
         ],
       },
     },
