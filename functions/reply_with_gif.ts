@@ -1,15 +1,46 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 
-const GIFS = [
+const CLASSIC_GIFS = [
   "https://media1.tenor.com/m/NFf-4JOw-PUAAAAC/everyone-gary-oldman.gif",
-  "https://media1.tenor.com/m/NFf-4JOw-PUAAAAd/everyone-gary-oldman.gif",
-  "https://media1.tenor.com/m/Q6o-SoluOS4AAAAC/gary-oldman-leon-the-professional.gif",
   "https://media1.tenor.com/m/CLWtP9Zs0MIAAAAC/everyone-leon-the-professional.gif",
-  "https://media.tenor.com/CLWtP9Zs0MIAAAAM/everyone-leon-the-professional.gif",
   "https://media1.tenor.com/m/wqqtsnLt83YAAAAC/everyone-gary-oldman.gif",
-  "https://media1.tenor.com/m/wqqtsnLt83YAAAAd/everyone-gary-oldman.gif",
   "https://media.tenor.com/r-X5Vw8WPtEAAAAM/leon-the-professional-norman-stansfield.gif",
 ];
+
+const BONUS_GIFS = [
+  "https://media.tenor.com/mhsHC6S0t7kAAAAM/gif.gif",
+  "https://media.tenor.com/lg_143KGGL8AAAAM/gary-oldman-actor.gif",
+  "https://media.tenor.com/ESUpXpXiUuAAAAAM/never-thank-you.gif",
+  "https://media.tenor.com/cmvlZ8Sy4nUAAAAM/gary-oldman-actor.gif",
+  "https://media.tenor.com/CN6bNckzypoAAAAM/at-your-service.gif",
+  "https://media.tenor.com/5PsOkNKH-OkAAAAM/coroca-angry.gif",
+  "https://media.tenor.com/PacboAgOOoQAAAAM/gary-oldman-bingo.gif",
+  "https://media.tenor.com/S2IqQC54vDYAAAAM/leon-the-professional-norman-stansfield.gif",
+  "https://media.tenor.com/ntISAag9GrAAAAAM/the-professional-leon.gif",
+  "https://media.tenor.com/_IzouOK5FXAAAAAC/frustrated-frustration.gif",
+  "https://makeagif.com/i/9uHoPd",
+];
+
+const WEIGHTED_GIFS = [
+  ...CLASSIC_GIFS.map((url) => ({ url, weight: 1 })),
+  ...BONUS_GIFS.map((url) => ({ url, weight: 0.5 })),
+];
+
+const TOTAL_WEIGHT = WEIGHTED_GIFS.reduce((sum, gif) => sum + gif.weight, 0);
+
+function pickWeightedGif(): string {
+  let remaining = Math.random() * TOTAL_WEIGHT;
+
+  for (const gif of WEIGHTED_GIFS) {
+    remaining -= gif.weight;
+    if (remaining <= 0) {
+      return gif.url;
+    }
+  }
+
+  // Fallback should never happen, but guard to satisfy TypeScript.
+  return WEIGHTED_GIFS[WEIGHTED_GIFS.length - 1].url;
+}
 
 const EVERYONE_RE = /\beveryone\b/i;
 
@@ -36,7 +67,7 @@ export default SlackFunction(
       return { outputs: {} };
     }
 
-    const gif = GIFS[Math.floor(Math.random() * GIFS.length)];
+    const gif = pickWeightedGif();
 
     const res = await client.chat.postMessage({
       channel: inputs.channel_id,
