@@ -4,7 +4,6 @@ const GIFS = [
   "https://media1.tenor.com/m/NFf-4JOw-PUAAAAC/everyone-gary-oldman.gif",
   "https://media1.tenor.com/m/NFf-4JOw-PUAAAAd/everyone-gary-oldman.gif",
   "https://media1.tenor.com/m/Q6o-SoluOS4AAAAC/gary-oldman-leon-the-professional.gif",
-  "https://media1.tenor.com/m/Q6o-SoluOS4AAAAd/gary-oldman-leon-the-professional.gif",
   "https://media1.tenor.com/m/CLWtP9Zs0MIAAAAC/everyone-leon-the-professional.gif",
   "https://media.tenor.com/CLWtP9Zs0MIAAAAM/everyone-leon-the-professional.gif",
   "https://media1.tenor.com/m/wqqtsnLt83YAAAAC/everyone-gary-oldman.gif",
@@ -39,7 +38,7 @@ export default SlackFunction(
 
     const gif = GIFS[Math.floor(Math.random() * GIFS.length)];
 
-    await client.chat.postMessage({
+    const res = await client.chat.postMessage({
       channel: inputs.channel_id,
       thread_ts: inputs.message_ts,
       text: "Gary Oldman has something to say",
@@ -51,6 +50,10 @@ export default SlackFunction(
         },
       ],
     });
+
+    if (!res.ok) {
+      console.error(`chat.postMessage failed: ${res.error} (gif: ${gif})`);
+    }
 
     return { outputs: {} };
   },
