@@ -2,7 +2,6 @@ import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 
 const CLASSIC_GIFS = [
   "https://media1.tenor.com/m/NFf-4JOw-PUAAAAC/everyone-gary-oldman.gif",
-  "https://media1.tenor.com/m/CLWtP9Zs0MIAAAAC/everyone-leon-the-professional.gif",
   "https://media1.tenor.com/m/wqqtsnLt83YAAAAC/everyone-gary-oldman.gif",
   "https://media.tenor.com/r-X5Vw8WPtEAAAAM/leon-the-professional-norman-stansfield.gif",
 ];
