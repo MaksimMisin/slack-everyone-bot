@@ -21,25 +21,11 @@ const BONUS_GIFS = [
   "https://makeagif.com/i/9uHoPd",
 ];
 
-const WEIGHTED_GIFS = [
-  ...CLASSIC_GIFS.map((url) => ({ url, weight: 1 })),
-  ...BONUS_GIFS.map((url) => ({ url, weight: 0.5 })),
-];
-
-const TOTAL_WEIGHT = WEIGHTED_GIFS.reduce((sum, gif) => sum + gif.weight, 0);
+const CLASSIC_CHANCE = 0.7;
 
 function pickWeightedGif(): string {
-  let remaining = Math.random() * TOTAL_WEIGHT;
-
-  for (const gif of WEIGHTED_GIFS) {
-    remaining -= gif.weight;
-    if (remaining <= 0) {
-      return gif.url;
-    }
-  }
-
-  // Fallback should never happen, but guard to satisfy TypeScript.
-  return WEIGHTED_GIFS[WEIGHTED_GIFS.length - 1].url;
+  const pool = Math.random() < CLASSIC_CHANCE ? CLASSIC_GIFS : BONUS_GIFS;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 const EVERYONE_RE = /\beveryone\b/i;
