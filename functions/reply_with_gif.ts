@@ -20,6 +20,7 @@ const BONUS_GIFS = [
   "https://i.makeagif.com/media/3-01-2016/9uHoPd.gif",
 ];
 
+const TRIGGER_CHANCE = 0.33;
 const CLASSIC_CHANCE = 0.7;
 
 function pickWeightedGif(): string {
@@ -81,8 +82,8 @@ export default SlackFunction(
       }
     }
 
-    // "everyone" → random Gary GIF
-    if (isEveryone) {
+    // "everyone" → random Gary GIF (33% chance)
+    if (isEveryone && Math.random() < TRIGGER_CHANCE) {
       const gif = pickWeightedGif();
       const res = await client.chat.postMessage({
         channel: inputs.channel_id,
